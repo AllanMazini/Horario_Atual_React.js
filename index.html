@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,7 @@
             margin: 0;
             padding: 0;
         }
-       div{
+       #root{
            width: 100%;
            height: 100%;
            color: #fffb;
@@ -20,15 +20,21 @@
            flex-direction: column;
            text-align: center;
            justify-content: center;
+         
            background: rgb(10, 0, 202);
            background: linear-gradient(to right, rgb(10, 0, 202), rgb(150, 2, 204));
            background: -webkit-linear-gradient(to right,rgb(10, 0, 202), rgb(150, 2, 204) );
         }
-
-        h1{
+        .clock{
             font-size: 60px;
             display: block;
         }
+        .date{
+            font-size: 30px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
 
     </style>
 </head>
@@ -43,38 +49,66 @@
 
     <script type="text/babel">
 
-        const getTime = () => {
-            const date = new Date();
+
+        class Clock extends React.Component{
+
+            varSetInterval = null;
+
+            constructor(props){
+                super(props);
+                this.state = {date: new Date()};
+            }
+
+            componentDidMount(){
+               const TIMER_INTERVAL = 1000;
+               this.varSetInterval = setInterval(() => {
+                    this.tick();
+                }, TIMER_INTERVAL);
+            }
+
+            componentWillMount(){
+                clearInterval(this.varSetInterval);
+            }
+
+            tick(){
+                this.setState({date: new Date()});
+            }
+
+        getTime(){
+            const {date} = this.state;
             const hours = `0${date.getHours()}`.slice(-2);
             const minutes = `0${date.getMinutes()}`.slice(-2);
             const seconds = `0${date. getSeconds()}`.slice(-2);
-
-            return {hours, minutes, seconds};
+            
+            return `${hours}:${minutes}:${seconds}`;
+           
         }
 
-        const getDay = ()=>{
+        getDate(){
             const date = new Date();
             const day = `0${date.getDay()}`.slice(-2);
             const month = `0${date.getMonth()}`.slice(-2);
             const year = date.getFullYear();
 
             return `${day} / ${month} /  ${year}`;
+
+            
         }
 
-        const Clock = () =>{
-            const {hours, minutes, seconds} = getTime();
-            const day = getDay();
-            const element = (
+        render(){
+            const time = this.getTime();
+            const day = this.getDate();
+            return (
                 <div>
-                    <h1>{hours}:{minutes}:{seconds}</h1>
-                    <h2>{day}</h2>
+                    <div className="date"> {day} </div>
+                    <div className="clock"> {time} </div>
                 </div>
-                );
-
-            ReactDOM.render(element, document.getElementById('root'));
+                );            
         }
-
-        setInterval(Clock,1000);
+    }
+    
+    ReactDOM.render(<Clock />, document.getElementById('root'));
+        
 
     </script>
 </body>
